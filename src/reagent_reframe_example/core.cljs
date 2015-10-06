@@ -1,6 +1,9 @@
 (ns ^:figwheel-always reagent-reframe-example.core
-    (:require
-              [reagent.core :as reagent :refer [atom]]))
+  (:require
+    [re-frame.core :as re-frame]
+    [reagent.core :as reagent :refer [atom]]
+    [reagent-reframe-example.data :refer [app-state]]
+    [reagent-reframe-example.reframe :as reframe]))
 
 (enable-console-print!)
 
@@ -8,29 +11,49 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 
-(def app-state (atom {:text "Text from the app-state!"}))
+(re-frame/dispatch [:initialise-db])
 
 (defn header
   []
-  [:h1 "Reagent + re-frame + secretary"])
+  [:div
+   [:h1 "Reagent + re-frame + secretary"]
+   (into [:h3]
+         (interpose " "
+                    (map (fn [[url title]]
+                           [:a {:href url} title]) [["#/" "Home"]
+                                                    ["#/public" "Public"]
+                                                    ["#/private" "Private"]])))])
 
 (defn home
   []
-  [:div "Home"])
+  (reagent/create-class
+    {:reagent-render (let [items (re-frame/subscribe [:items])]
+                       (fn []
+                         [:div [:div "Home"]
+                          [:strong "List:"]
+                          (when @items
+                            (into [:ul]
+                                (mapv (fn [item]
+                                       [:li (str item)]) @items)))]))}))
 
 (defn public
   []
-  [:div "public"])
+  (reagent/create-class
+    {:reagent-render (fn []
+                       [:div "Public"])}))
 
 (defn private
   []
-  [:div "public"])
+  (reagent/create-class
+    {:reagent-render (fn []
+                       [:div "Private"])}))
 
 (defn hello-world []
   [:div
    [header]
    [home]
    [:p "app-state: " (:text @app-state)]])
+
 
 (reagent/render-component [hello-world]
                           (. js/document (getElementById "app")))
@@ -39,5 +62,5 @@
   ;; optionally touch your app-state to force rerendering depending on
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
-)
+  )
 
