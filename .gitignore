@@ -1,3 +1,4 @@
 resources/public/js
 figwheel_server.log
 reagent_reframe_example.iml
+.idea

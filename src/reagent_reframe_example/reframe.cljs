@@ -2,15 +2,28 @@
   (:require [re-frame.core :as re-frame])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
+
 (re-frame/register-handler
-  :initialise-db             ;; usage: (dispatch [:initialise-db])
+  :set-current-page
+  (fn [app-state [_ page]]
+    (assoc app-state :current-page page)))
+
+(re-frame/register-handler
+  :initialise-db
   (fn
-    [_ _]                   ;; Ignore both params (db and v).
-    {:items ["One" "Two" "Three"]
-     :text "Text from the app-state!"}))
+    [_ _]
+    {:current-page nil
+     :items        ["One" "Two" "Three"]
+     :text         "Text from the app-state!"}))
 
 
 (re-frame/register-sub
   :items
   (fn [db]
     (reaction (:items @db))))
+
+
+(re-frame/register-sub
+  :current-page
+  (fn [db]
+    (reaction (:current-page @db))))

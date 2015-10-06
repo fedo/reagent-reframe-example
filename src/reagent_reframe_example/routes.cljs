@@ -1,12 +1,24 @@
 (ns reagent-reframe-example.routes
   (:require [goog.events :as events]
             [goog.history.EventType :as EventType]
+            [re-frame.core :as re-frame]
             [reagent-reframe-example.data :as data]
             [secretary.core :as secretary :refer-macros [defroute]])
   (:import goog.History))
 
 
+(enable-console-print!)
+
+
 (secretary/set-config! :prefix "#")
+
+
+(defroute "/public" []
+  (re-frame/dispatch [:set-current-page "public"]))
+
+
+(defroute "/private" []
+  (re-frame/dispatch [:set-current-page "private"]))
 
 
 
@@ -14,7 +26,8 @@
 (defroute "/" []
           )
 ;; page not found
-(defroute "*" [] (go-to-path "#/"))
+(defroute "*" []
+  (println "[routes] *"))
 
 
 ;; Quick and dirty history configuration.
