@@ -2,7 +2,7 @@
   (:require [goog.events :as events]
             [goog.history.EventType :as EventType]
             [re-frame.core :as re-frame]
-            [reagent-reframe-example.data :as data]
+            [reagent-reframe-example.components :as components]
             [secretary.core :as secretary :refer-macros [defroute]])
   (:import goog.History))
 
@@ -14,17 +14,17 @@
 
 
 (defroute "/public" []
-  (re-frame/dispatch [:set-current-page "public"]))
+  (re-frame/dispatch [:set-current-page #'components/public]))
 
 
 (defroute "/private" []
-  (re-frame/dispatch [:set-current-page "private"]))
+  (re-frame/dispatch [:set-current-page #'components/private]))
 
 
 
 ;; nop
 (defroute "/" []
-          )
+  (re-frame/dispatch [:set-current-page #'components/home]))
 ;; page not found
 (defroute "*" []
   (println "[routes] *"))
